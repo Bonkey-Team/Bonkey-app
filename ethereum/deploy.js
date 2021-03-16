@@ -3,7 +3,7 @@ const Web3 = require('web3');
 const compiledFactory = require('./build/CampaignFactory.json');
 
 const provider = new HDWalletProvider(
-  'order diagram chair faint craft caught planet unable copy stock toy chaos',
+  'order chair diagram faint craft caught planet unable copy stock toy chaos',
   'https://rinkeby.infura.io/v3/fa350140428049b8ad42add9ac178781'
 );
 const web3 = new Web3(provider);
