@@ -3,16 +3,20 @@ import { Grid, Container } from 'semantic-ui-react';
 import Head from 'next/head';
 import Header from './Header';
 
-export default props => {
+export default (props) => {
   return (
-    <Container text>
+    <div className='layout'>
         <style>
           {`
           html, body {
             background-color: #252839 !important;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height:100%;
           }
           p {
-            align-content: center;
+            align-content: left;
             background-color: #495285;
             color: #fff;
             display: flex;
@@ -33,19 +37,14 @@ export default props => {
           href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/semantic.min.css"
         />
       </Head>
-      <Grid centered>
-        
-        {/** body */}
-        <Grid.Row>
-          {/** header */}
-          <Header></Header>
-          {/** content */}
-        </Grid.Row>
-        <Grid.Row>
-          {props.children}
-        </Grid.Row>
-
-      </Grid>
-    </Container>
+      {/** header */}
+      <div style={{width: '100%', height: '55px'}}>
+        <Header></Header>
+      </div>
+      
+      <div style={{width: '910px', margin: '50px auto'}}>
+        {props.children}
+      </div>
+    </div>
   );
 };
