@@ -20,36 +20,36 @@ export default class Header extends React.Component{
 
               <Link route='/BonkeyFactory' >
                 <Menu.Item
-                  name='首页'
+                  name='Home'
                   active={activeItem === 'BonkeyFactory'}
                 />
               </Link>
               <Link route='/createProject'>
                 <Menu.Item
-                  name='创建项目'
+                  name='Create Project'
                   active={activeItem === 'cProject'}
                 />
               </Link>
               <Link route='/project/index'>
                 <Menu.Item
-                  name='项目详情'
+                  name='Project Detail'
                   active={activeItem === 'projectIndex'}
                 />
               </Link>
               <Link route='/testPage' >
                 <Menu.Item
-                  name='测试页'
+                  name='Test Page'
                   active={activeItem === 'BonkeyFactory'}
                 />
               </Link>
               <Link route='/doc' >
                 <Menu.Item
-                  name='文档'
+                  name='Document'
                   active={activeItem === 'doc'}
                 />
               </Link>              
               <Menu.Item position='right'>
-                <Button as='a' inverted >连接钱包</Button>
+                <Button as='a' inverted >Connect Wallet</Button>
               </Menu.Item>            
           </Menu>
       )

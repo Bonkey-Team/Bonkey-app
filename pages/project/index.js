@@ -11,7 +11,7 @@ const projectData = {
         token0: '0xc46180bedf5c78e536f511d00e535ca8b63dfda8',
         token1: '0x852cdfe1879b7e7e5ee4475008dc19b93b7d5667',
         mgrAddr: '0x05ff2b0db69458a0750badebc4f9e13add608c7f',
-        projectMeta: 'all update version',
+        projectMeta: 'project introduction',
         colloborators: [{
             address:'0x05ff2b0db69458a0750badebc4f9e13add608c7f',
             contribute: 0.3
@@ -107,7 +107,8 @@ const BodyWraper = () => {
                                placeholder='0.0'></Input>
                     </div>
                     <div style={{width:'340px', height:'40px', margin:'2px auto'}}>
-                        <Button as='a' >连接钱包</Button>
+                        <Button as='a' >Approve</Button>
+                        <Button as='a' >Deposit</Button>
                     </div>
                     {/* contribute token1 */}
                     <div style={{width:'340px', height:'60px', margin:'10px 2px 5px 5px', background:'#fff'}}>
@@ -117,7 +118,8 @@ const BodyWraper = () => {
                                placeholder='0.0'></Input>
                     </div>
                     <div style={{width:'340px', height:'40px', margin:'2px auto'}}>
-                        <Button as='a' >连接钱包</Button>
+                        <Button as='a' >Approve</Button>
+                        <Button as='a' >Deposit</Button>
                     </div>
                 </div>
             </div>

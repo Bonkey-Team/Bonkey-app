@@ -16,7 +16,7 @@ class CampaignIndex extends Component {
                   <Form size='large'>
                     <Segment stacked style={{width: '500px', align: 'center'}}>
                       <Header as='h2' color='orange' textAlign='left'>
-                      创建项目
+                      Create Project 
                       </Header>
                       <InputPanel label='Source Token' placeholder='0x'/>
                       <InputPanel label='Target Token' placeholder='0x'/>
@@ -26,7 +26,7 @@ class CampaignIndex extends Component {
                       <InputPanel label='Commission Rate' placeholder='0.0'/>
                       <InputAreaPanel label='Project Meta' placeholder='describe you project'/>
                       <Button color='orange' fluid size='large'>
-                        创建
+                       Create 
                       </Button>
                     </Segment>
                   </Form>

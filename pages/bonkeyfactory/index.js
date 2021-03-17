@@ -12,7 +12,6 @@ const PollView = () => (
 
 const panes = [
     { menuItem: 'Projects', render: () => <Tab.Pane><ProjectView></ProjectView></Tab.Pane> },
-    { menuItem: 'PollThreshold', render: () => <Tab.Pane><PollView></PollView></Tab.Pane> },
   ]
 
 export default function BonkeyFactory(){
