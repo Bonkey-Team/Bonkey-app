@@ -31,7 +31,7 @@ export const ConnectButton = () => {
 
   return (
     <>
-        <Button as='a' inverted onClick={onClick} style={{marginTop:'10px'}}>连接钱包</Button>
+        <Button as='a' inverted onClick={onClick} style={{marginTop:'10px'}}>Connect To Wallet</Button>
     </>
   )
 }
