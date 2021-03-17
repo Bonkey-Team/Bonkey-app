@@ -43,9 +43,21 @@ const fetcher = (library) => (...args) => {
 }
 
 const Balance = () => {
-  const { account, library, activate } = useWeb3React()
+  const { chainId, account, library, activate } = useWeb3React()
   if(!library){
     return <>...</>
+  }
+
+  const onClick = () => {
+    activate(injectedConnector)
+  }
+
+  if(chainId != 56 && chainId != 97){
+    return (
+        <>
+            <Button as='a' inverted onClick={onClick} style={{marginTop:'10px'}}>Not BSC, Again!</Button>
+        </>
+      )
   }
 
   const { data: balance, mutate } = useSWR(['getBalance', account, 'latest'], {
