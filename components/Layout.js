@@ -42,7 +42,7 @@ export default (props) => {
         <Header></Header>
       </div>
       
-      <div style={{width: '910px', margin: '50px auto'}}>
+      <div style={{width: '910px', margin: '15px auto'}}>
         {props.children}
       </div>
     </div>

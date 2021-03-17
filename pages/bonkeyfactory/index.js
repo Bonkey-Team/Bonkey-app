@@ -16,10 +16,10 @@ const panes = [
 
 export default function BonkeyFactory(){
     return (
-        <Layout>
+        <>
             <div inverted='true' style={{width:'900px', color:'red', margin: '10px auto', background:'#aee2b1'}}>
                 <Tab panes={panes} />
             </div>
-        </Layout>
+        </>
     )
 }

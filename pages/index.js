@@ -10,7 +10,7 @@ class CampaignIndex extends Component {
 
   render() {
         return (
-          <Layout>
+          
              <Grid textAlign='center' style={{ height: '100' }}>
                 <Grid.Column style={{ maxWidth: 450 }}>
                   <Form size='large'>
@@ -32,7 +32,7 @@ class CampaignIndex extends Component {
                   </Form>
                 </Grid.Column>
               </Grid>
-          </Layout>
+          
         )
   }
 }
