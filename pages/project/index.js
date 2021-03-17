@@ -139,8 +139,8 @@ const BodyWraper = () => {
 
 export default function ProjectShow(){
     return (
-        <Layout>
+        <>
             <BodyWraper></BodyWraper>
-        </Layout>
+        </>
     )
 }
