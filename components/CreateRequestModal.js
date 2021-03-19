@@ -1,5 +1,6 @@
 import React from 'react'
-import { Button, Input, Modal, Dropdown, TextArea } from 'semantic-ui-react'
+import { Input, Modal, Dropdown, TextArea } from 'semantic-ui-react'
+import { AuthButon as Button } from './AuthButton'
 
 
 const CreatRequestView = () => (
