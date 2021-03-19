@@ -32,7 +32,6 @@ export async function fetchProject(provider, index){
 }
 
 export async function getProjectInfo(provider, address){
-    console.log('get project === : ', address)
     const project = getContract(address, PROJECT_DEFINETION['abi'], provider);
     return project
 }
