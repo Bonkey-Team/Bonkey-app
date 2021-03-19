@@ -8,6 +8,6 @@ routes
   .add('/proposal/index', '/proposal/index')
   .add('/withdraw/index', '/withdraw/index')
   .add('/testPage', '/test/index')
-  .add('/project/index', '/project/index')
+  .add('/project/:address', '/project/index')
 
 module.exports = routes;
