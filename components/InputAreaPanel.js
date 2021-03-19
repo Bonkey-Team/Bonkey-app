@@ -7,7 +7,7 @@ export default function InputAreaPanel(props){
             <div style={{width:'100%', display:'flex', margin:'2px 5px', fontSize:'16px', color:'grey'}}>
             <label>{props.label}</label>
             </div>
-            <textarea placeholder={props.placeholder}/>
+            <textarea placeholder={props.placeholder} name={props.name} value={props.value} onChange={props.onChange}/>
             </Form.Field>
          </>
     )

@@ -1,10 +1,12 @@
 import Layout from "../../components/Layout";
-import { Card, Input, Dropdown, Button } from 'semantic-ui-react'
+import { Card, Input, Dropdown } from 'semantic-ui-react'
 import { checkPropTypes } from "prop-types";
 import { forEach } from "async";
 import InputPanel from "../../components/InputPanel";
 import TablePagination from "../../components/TablePagination";
 import CreateRequestModal from '../../components/CreateRequestModal'
+import { AuthButon as Button} from '../../components/AuthButton'
+
 
 const projectData = {
     firstCard: {

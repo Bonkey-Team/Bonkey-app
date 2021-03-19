@@ -13,6 +13,8 @@
   "dependencies": {
     "@openzeppelin/cli": "^2.8.2",
     "@truffle/hdwallet-provider": "^1.0.40",
+    "@web3-react/core": "^6.1.9",
+    "@web3-react/injected-connector": "^6.0.7",
     "date-fns": "^2.11.1",
     "ethereumjs-wallet": "^0.6.5",
     "fs-extra": "^5.0.0",
@@ -31,6 +33,7 @@
     "semantic-ui-react": "^0.77.1",
     "simple-react-validator": "^1.4.6",
     "solc": "^0.4.26",
+    "swr": "^0.5.3",
     "web3": "^1.2.11"
   },
   "devDependencies": {

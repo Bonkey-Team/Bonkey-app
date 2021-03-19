@@ -1,5 +1,5 @@
-import BONKEY_FACTORY from './bonkeyfactory.json'
+import BONKEY_FACTORY_ABI from './bonkeyfactory.json'
 
-const BONKEY_FACTORY_ADDRESS = '';
+const BONKEY_FACTORY_ADDRESS = '0x21e9390e390deA7ACFe34b8a7c72bD724e16436d';
 
-export {BONKEY_FACTORY, BONKEY_FACTORY_ADDRESS}
+export { BONKEY_FACTORY_ABI, BONKEY_FACTORY_ADDRESS }
