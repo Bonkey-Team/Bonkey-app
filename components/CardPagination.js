@@ -18,18 +18,40 @@ const CardPagination = (props) => {
     props.nextPage(activeItem)
   }, [activeItem])
   
+  if(!!!props.data){
+    return (
+      <Table>
+      <Table.Body>
+        <Table.Row style={{textAlign:'center', height:'100px', fontSize:'14px'}}><p style={{background: 'white', color: 'black'}}>No Data Yet</p></Table.Row>
+      </Table.Body>
+      <Table.Footer>
+      <Table.Row>
+        <Table.HeaderCell colSpan='1'>
+          <Menu floated='right' pagination>
+            <Menu.Item as='a' icon >
+              <Icon name='chevron left'/>
+            </Menu.Item>
+            <Menu.Item as='a' icon>
+              <Icon name='chevron right' />
+            </Menu.Item>
+          </Menu>
+        </Table.HeaderCell>
+      </Table.Row>
+      </Table.Footer>
+      </Table>
+    )
+  }
+
   return (
   <Table>
     <Table.Body>
         { props.data.map((item, key) => (
           <Table.Row key={key}>
-            <Link route='/project/index'>
+            <Link route={`/project/${item.projectAddress}`}>
               <Card style={{width:'860px', margin:'5px'}}>
                 <Card.Content>
                   <Card.Header>{item.meta}</Card.Header>
-                  <Card.Description>
-                    <a>View Project</a>
-                  </Card.Description>
+                  <Card.Description><a href="#">ViewProject</a></Card.Description>
                 </Card.Content>
               </Card>
             </Link>
