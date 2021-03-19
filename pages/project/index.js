@@ -123,7 +123,6 @@ function fillViewData(contract, setProject){
 export default function ProjectShow(){
     const router = useRouter()
     const projectAddress = router.query.address
-    
     const [ project, setProject ] = useState({})
     const { library, account } = useWeb3React() 
     
