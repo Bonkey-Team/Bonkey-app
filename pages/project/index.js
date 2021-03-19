@@ -1,11 +1,12 @@
-import Layout from "../../components/Layout";
-import { Card, Input, Dropdown } from 'semantic-ui-react'
-import { checkPropTypes } from "prop-types";
-import { forEach } from "async";
-import InputPanel from "../../components/InputPanel";
+import React, { useState } from 'react'
+import { useRouter } from 'next/router'
+import { useWeb3React } from '@web3-react/core'
+import { Input, Dropdown } from 'semantic-ui-react'
 import TablePagination from "../../components/TablePagination";
 import CreateRequestModal from '../../components/CreateRequestModal'
 import { AuthButon as Button} from '../../components/AuthButton'
+import { FirstCard, SecondaryCard } from '../../components/CustomCard'
+import { getProjectInfo } from '../../utils/Project'
 
 
 const projectData = {
@@ -39,32 +40,6 @@ const projectData = {
         meta:'Price',
         desc:'the price of you token0',
     }]
-}
-
-const FirstCard = (props) =>{
-    return (
-        <Card style={{width:'100%', height:'100%'}}>
-            <Card.Content>
-                <Card.Header style={{margin:'5px auto', fontSize:'14px'}}>Token0: {props.token0}</Card.Header>
-                <Card.Header style={{margin:'5px auto', fontSize:'14px'}}>Token1: {props.token1}</Card.Header>
-                <Card.Meta style={{margin:'5px auto'}}>Manager Address: {props.mgrAddr}</Card.Meta>
-                <Card.Description style={{margin:'5px auto'}}><a>{props.projectMeta}</a></Card.Description>
-                <Card.Description style={{margin:'5px auto'}}><a>View Colloborators</a></Card.Description>
-            </Card.Content>
-        </Card>
-    )
-}
-
-const SecondaryCard = (props) =>{
-    return (
-        <Card style={{width:'100%', height:'100%'}}>
-            <Card.Content>
-                <Card.Header style={{margin:'5px auto', fontSize:'12px'}}>{props.value}</Card.Header>
-                <Card.Meta style={{margin:'5px auto'}}>{props.meta}</Card.Meta>
-                <Card.Description style={{margin:'5px auto'}}>{props.desc}</Card.Description>
-            </Card.Content>
-        </Card>
-    )
 }
 
 const BodyWraper = () => {
@@ -139,7 +114,24 @@ const BodyWraper = () => {
     )
 }
 
+// setState
+
+function fillViewData(contract, setProject){
+    console.log(contract)
+}
+
 export default function ProjectShow(){
+    const router = useRouter()
+    const projectAddress = router.query.address
+    console.log('project addres1s is ', router.query.address)
+    const [ project, setProject ] = useState({})
+    const { library, account } = useWeb3React() 
+    
+    getProjectInfo(library, projectAddress)
+        .then(r => fillViewData(r, setProject))
+        .catch(error => console.log('get project info error: ', error)) 
+
+    
     return (
         <>
             <BodyWraper></BodyWraper>
