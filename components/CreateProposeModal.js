@@ -1,7 +1,7 @@
 import { useWeb3React } from '@web3-react/core'
 import React, { useEffect, useState } from 'react'
 import { Input, Modal, Dropdown, TextArea, Button } from 'semantic-ui-react'
-import { getProjectInfo } from '../utils/Project'
+import { getProjectContract } from '../utils/Project'
 import Web3 from 'web3'
 
 // create a proposal
@@ -12,7 +12,7 @@ function CreateProposeModal(props) {
 
   useEffect(() => {
     console.log(props.projectAddress)
-  }, [props])
+  }, [props, data.loading])
 
   const submit = async () => {
     setData({ loading: true})
@@ -21,7 +21,7 @@ function CreateProposeModal(props) {
       const { content, amount } = data;
       console.log(props.projectAddress)
       // create a proposal
-      const contract = await getProjectInfo(library, props.projectAddress, account)
+      const contract = await getProjectContract(library, props.projectAddress, account)
       console.log(contract)
       const overrides = {
         gasLimit: 2000000
@@ -30,7 +30,7 @@ function CreateProposeModal(props) {
     }catch(err){
       console.log("submit error !", err)
     }
-    setData({open:false, loading: false})
+    setData({...data, open:false, loading: false})
   }
 
   return (

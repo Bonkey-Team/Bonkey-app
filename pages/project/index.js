@@ -11,14 +11,14 @@ import { TRUNCATE_PROJECT_MATE_LEN } from '../../constants/index'
 import Web3 from 'web3';
 
 
-const fillViewData = async ( contract, provider ) => {
+const fillViewData = ( contract, provider ) => {
     const web3 = new Web3(provider)
     let projectInfo =  
         {
             address: contract.address,
-            token0: await contract._source_token(),
-            token1: await contract._target_token(),
-            manager: await contract._manager(),
+            token0: contract.sourceToken,
+            token1: contract.targetToken,
+            manager: contract.manager,
             price: 0,
             rateProposal: 0,
             rateCommission: 0,
@@ -33,16 +33,16 @@ const fillViewData = async ( contract, provider ) => {
             }]
         }
         console.log('contract is : ', contract) 
-    const price = await contract._price()
+    const price = contract.price
     projectInfo.price = web3.utils.fromWei(price.toString(), 'ether')
-    const rateProposal = await contract._min_rate_to_pass_proposal()
+    const rateProposal = contract.rateProposal
     projectInfo.rateProposal= rateProposal.toString()
     // const rateRequest = await contract._min_rate_to_pass_request()
     const rateRequest = 0
     // console.log('rate proposal is : ', contract._min_rate_to_pass_request())
     
     projectInfo.rateRequest= rateRequest.toString()
-    const rateCommission = await contract._commission_rate()
+    const rateCommission = contract.rateCommission
     projectInfo.rateCommission= rateCommission.toString()
     return projectInfo    
 }

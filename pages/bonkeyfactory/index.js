@@ -1,7 +1,7 @@
 import { Tab } from 'semantic-ui-react'
 import Layout from '../../components/Layout'
 import CardPagination from '../../components/CardPagination'
-import { fetchProjectCount, fetchProject, getProjectInfo } from '../../utils/Project'
+import { fetchProjectCount, fetchProject, getProjectContract } from '../../utils/Project'
 import { useWeb3React } from '@web3-react/core'
 import React, { useEffect, useState } from 'react'
 import { MAIN_PAGE_SIZE, TRUNCATE_PROJECT_MATE_LEN } from '../../constants'
@@ -21,7 +21,7 @@ export default function BonkeyFactory(){
     
     // get project info
     const getProjectInfoByAddress = async ( address ) => {
-        return await getProjectInfo(library, address)
+        return await getProjectContract(library, address)
     }
 
     // setData({...data, projects: projects})
