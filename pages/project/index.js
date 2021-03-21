@@ -6,7 +6,7 @@ import TablePagination from "../../components/TablePagination";
 import CreateProposeModal from '../../components/CreateProposeModal'
 import { AuthButon as Button} from '../../components/AuthButton'
 import { FirstCard, SecondaryCard } from '../../components/CustomCard'
-import { getProjectInfo } from '../../utils/Project'
+import { getProjectContract, getProjectInfo } from '../../utils/Project'
 import { TRUNCATE_PROJECT_MATE_LEN } from '../../constants/index'
 import Web3 from 'web3';
 
@@ -59,10 +59,11 @@ const BodyWraper = ( props ) => {
     // }
     // get request param
     
-    
-    
     // set state
     const [ data, setData ] = useState({
+        address:'0x',
+        contributeToken0: 0,
+        contributeToken1: 0,
         project: {
             manager: '0x',
             token0: '0x',
@@ -97,7 +98,62 @@ const BodyWraper = ( props ) => {
         {key:'BNB', text:'BNB', value:'BNB'},
         {key:'DAI', text:'DAI', value:'DAI'},
     ]
+
+    // this method
+    const approveToken0 = async () => {
+        if(data.contributeToken0 === 0){
+            alert("input amount")
+            return
+        }
+        const contract = await getProjectContract(data.address)
+        // contract.
+    }
     
+    const approveToken1 = async () => {
+        if(data.contributeToken0 === 0){
+            alert("input amount")
+            return
+        }
+        const contract = await getProjectContract(data.address)
+        // contract.
+    }
+
+    const despostToken0 = async () => {
+        if(data.contributeToken0 === 0){
+            alert("input amount")
+            return
+        }
+        const contract = await getProjectContract(data.address)
+        // contract.
+    }
+
+    const despostToken1 = async () => {
+        if(data.contributeToken0 === 0){
+            alert("input amount")
+            return
+        }
+        const contract = await getProjectContract(data.address)
+        // contract.
+    }
+
+    const withdrawToken0 = async () => {
+        if(data.contributeToken0 === 0){
+            alert("input amount")
+            return
+        }
+        const contract = await getProjectContract(data.address)
+        // contract.
+    }
+
+    const withdrawToken1 = async () => {
+        if(data.contributeToken0 === 0){
+            alert("input amount")
+            return
+        }
+        const contract = await getProjectContract(data.address)
+        // contract.
+    }
+
     return (
         // 上下两部分
         <div style={{display: 'flex', flexFlow: 'column', width: '900px', height: '900px', background:'#aee2b1'}}>
