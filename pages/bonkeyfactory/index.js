@@ -5,7 +5,6 @@ import { fetchProjectCount, fetchProject, getProjectInfo } from '../../utils/Pro
 import { useWeb3React } from '@web3-react/core'
 import React, { useEffect, useState } from 'react'
 import { MAIN_PAGE_SIZE, TRUNCATE_PROJECT_MATE_LEN } from '../../constants'
-import { SourceLocation } from 'hardhat/internal/hardhat-network/stack-traces/model'
 
 
 const PollView = () => (

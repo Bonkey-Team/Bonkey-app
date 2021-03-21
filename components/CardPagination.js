@@ -22,7 +22,7 @@ const CardPagination = (props) => {
     return (
       <Table>
       <Table.Body>
-        <Table.Row style={{textAlign:'center', height:'100px', fontSize:'14px'}}><p style={{background: 'white', color: 'black'}}>No Data Yet</p></Table.Row>
+        <Table.Row style={{textAlign:'center', height:'100px', fontSize:'14px'}}><p style={{background: 'white', color: 'black'}}>Not Connect Wallet</p></Table.Row>
       </Table.Body>
       <Table.Footer>
       <Table.Row>

@@ -1,56 +1,103 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useWeb3React } from '@web3-react/core'
 import { Input, Dropdown } from 'semantic-ui-react'
 import TablePagination from "../../components/TablePagination";
-import CreateRequestModal from '../../components/CreateRequestModal'
+import CreateProposeModal from '../../components/CreateProposeModal'
 import { AuthButon as Button} from '../../components/AuthButton'
 import { FirstCard, SecondaryCard } from '../../components/CustomCard'
 import { getProjectInfo } from '../../utils/Project'
+import { TRUNCATE_PROJECT_MATE_LEN } from '../../constants/index'
+import Web3 from 'web3';
 
 
-const projectData = {
-    firstCard: {
-        token0: '0xc46180bedf5c78e536f511d00e535ca8b63dfda8',
-        token1: '0x852cdfe1879b7e7e5ee4475008dc19b93b7d5667',
-        mgrAddr: '0x05ff2b0db69458a0750badebc4f9e13add608c7f',
-        projectMeta: 'project introduction',
-        colloborators: [{
-            address:'0x05ff2b0db69458a0750badebc4f9e13add608c7f',
-            contribute: 0.3
-        },{
-            address:'0x05ff2b0db69458a0750badebc4f9e13add608c7f',
-            contribute: 0.6
-        }]
-    },
-    secondaryCard: [{
-        value:'0.2',
-        meta:'Price',
-        desc:'the price of you token0',
-    },{
-        value:'0.2',
-        meta:'Price',
-        desc:'the price of you token0',
-    },{
-        value:'0.2',
-        meta:'Price',
-        desc:'the price of you token0',
-    },{
-        value:'0.2',
-        meta:'Price',
-        desc:'the price of you token0',
-    }]
+const fillViewData = async ( contract, provider ) => {
+    const web3 = new Web3(provider)
+    let projectInfo =  
+        {
+            address: contract.address,
+            token0: await contract._source_token(),
+            token1: await contract._target_token(),
+            manager: await contract._manager(),
+            price: 0,
+            rateProposal: 0,
+            rateCommission: 0,
+            rateRequest: 0,
+            projectTitle: 'title',
+            colloborators: [{
+                address:'0x05ff2b0db69458a0750badebc4f9e13add608c7f',
+                contribute: 0.3
+            },{
+                address:'0x05ff2b0db69458a0750badebc4f9e13add608c7f',
+                contribute: 0.6
+            }]
+        }
+        console.log('contract is : ', contract) 
+    const price = await contract._price()
+    projectInfo.price = web3.utils.fromWei(price.toString(), 'ether')
+    const rateProposal = await contract._min_rate_to_pass_proposal()
+    projectInfo.rateProposal= rateProposal.toString()
+    // const rateRequest = await contract._min_rate_to_pass_request()
+    const rateRequest = 0
+    // console.log('rate proposal is : ', contract._min_rate_to_pass_request())
+    
+    projectInfo.rateRequest= rateRequest.toString()
+    const rateCommission = await contract._commission_rate()
+    projectInfo.rateCommission= rateCommission.toString()
+    return projectInfo    
 }
 
-const BodyWraper = () => {
-    const p = projectData.firstCard;
-    const s = projectData.secondaryCard;
+const getRequests = async ( contract ) => {
+
+}
+const BodyWraper = ( props ) => {
+    const { library, account, active } = useWeb3React() 
+    const router = useRouter()
+    // if(!active){
+    //     router.push('/BonkeyFactory')
+    //     return;
+    // }
+    // get request param
+    
+    
+    
+    // set state
+    const [ data, setData ] = useState({
+        project: {
+            manager: '0x',
+            token0: '0x',
+            token1: '0x',
+            price: 0,
+            rateProposal: 0,
+            rateCommission: 0,
+            rateRequest: 0,
+            title: '',
+            content: ''
+        },
+        requests: [
+            {},
+            {}
+        ]
+    })
+    
+    useEffect(() => {
+        
+        // console.log("project address is : ", router.query)
+        const p = getProjectInfo(library, props.projectAddress)
+        
+        p.then(async a => {
+            let projectInfo = await fillViewData(a, library)
+            console.log('before setdata, project if : ', projectInfo)
+            setData({project: projectInfo})
+        }).catch(err => console.log("error: ", err))
+    }, [active])
+    
     const coins = [
         {key:'BNKY', text:'BNKY', value:'BNKY'},
         {key:'BNB', text:'BNB', value:'BNB'},
         {key:'DAI', text:'DAI', value:'DAI'},
     ]
-    console.log(s[0])
+    
     return (
         // 上下两部分
         <div style={{display: 'flex', flexFlow: 'column', width: '900px', height: '900px', background:'#aee2b1'}}>
@@ -60,19 +107,19 @@ const BodyWraper = () => {
                         <p style={{display:'flex', flexFlow:'column', justifyContent:'start', fontSize:'15px', marginTop:'3px', height: '30px'}}>Project Show</p>
                     </div>
                     <div style={{width:'490px', height:'150px', margin:'1px 5px 5px'}}>
-                        <FirstCard token0={p.token0} token1={p.token1} mgrAddr={p.mgrAddr} projectMeta={p.projectMeta} colloborators=''></FirstCard>
+                        <FirstCard token0={data.project.token0} token1={data.project.token1} mgrAddr={data.project.manager} projectMeta={data.project.title} colloborators=''></FirstCard>
                     </div>
                     <div style={{width:'230px', height:'100px', margin:'2px 5px'}}>
-                        <SecondaryCard value={s[0].value} meta={s[0].meta} desc={s[0].desc}></SecondaryCard>
+                        <SecondaryCard value={data.project.price} meta='price' desc='price'></SecondaryCard>
                     </div>
                     <div style={{width:'230px', height:'100px', margin:'2px 5px'}}>
-                        <SecondaryCard value={s[1].value} meta={s[1].meta} desc={s[1].desc}></SecondaryCard>
+                        <SecondaryCard value={data.project.rateProposal} meta='min rate to pass proposal' desc='min rate to pass proposal'></SecondaryCard>
                     </div>
                     <div style={{width:'230px', height:'100px', margin:'2px 5px'}}>
-                        <SecondaryCard value={s[2].value} meta={s[2].meta} desc={s[2].desc}></SecondaryCard>
+                        <SecondaryCard value={data.project.rateCommission} meta='commission rate' desc='commission rate'></SecondaryCard>
                     </div>
                     <div style={{width:'230px', height:'100px', margin:'2px 5px'}}>
-                        <SecondaryCard value={s[3].value} meta={s[3].meta} desc={s[3].desc}></SecondaryCard>
+                        <SecondaryCard value={data.project.rateRequest} meta='min rate to pass request' desc='min rate'></SecondaryCard>
                     </div>
                 </div>
                 <div style={{width:'350px', height:'300px', margin:'44px 5px', display: 'flex', flexDirection:'column'}}>
@@ -86,6 +133,7 @@ const BodyWraper = () => {
                     <div style={{width:'340px', height:'40px', margin:'2px auto'}}>
                         <Button as='a' >Approve</Button>
                         <Button as='a' >Deposit</Button>
+                        <Button as='a' >Withdraw</Button>
                     </div>
                     {/* contribute token1 */}
                     <div style={{width:'340px', height:'60px', margin:'10px 2px 5px 5px', background:'#fff'}}>
@@ -97,6 +145,7 @@ const BodyWraper = () => {
                     <div style={{width:'340px', height:'40px', margin:'2px auto'}}>
                         <Button as='a' >Approve</Button>
                         <Button as='a' >Deposit</Button>
+                        <Button as='a' >Withdraw</Button>
                     </div>
                 </div>
             </div>
@@ -104,37 +153,23 @@ const BodyWraper = () => {
               <div style={{width: '890px', height: '40px', margin:'5px 0px 0px 0px', textAlign:'right'}}>
                 {/* TODO 如果已经连接钱包且存在项目则可以创建请求 */}
                 {/* <Button as='a' >连接钱包</Button> */}
-                <CreateRequestModal/>
+                <CreateProposeModal projectAddress={data.project.address}/>
               </div>  
               <div style={{width: '890px', height: '500px', margin:'5px 0px'}}>
-                  <TablePagination></TablePagination>
+                  <TablePagination projectAddress={data.project.address}></TablePagination>
               </div>  
             </div>
         </div>
     )
 }
 
-// setState
-
-function fillViewData(contract, setProject){
-    console.log(contract)
-}
-
 export default function ProjectShow(){
     const router = useRouter()
     const projectAddress = router.query.address
-    console.log('project addres1s is ', router.query.address)
-    const [ project, setProject ] = useState({})
-    const { library, account } = useWeb3React() 
-    
-    getProjectInfo(library, projectAddress)
-        .then(r => fillViewData(r, setProject))
-        .catch(error => console.log('get project info error: ', error)) 
-
-    
+    console.log("request url : ", router.query)
     return (
         <>
-            <BodyWraper></BodyWraper>
+            <BodyWraper projectAddress={projectAddress}></BodyWraper>
         </>
     )
 }
