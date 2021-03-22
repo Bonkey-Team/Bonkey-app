@@ -16,6 +16,6 @@ export const AuthButon = (props) => {
     }, [active])
 
     return (
-        <Button disabled={!!!active} color='orange' style={props.style} onClick={props.onClick}>{props.children}</Button>
+        <Button disabled={!!!active} color='orange' style={props.style} loading={props.loading} onClick={props.onClick}>{props.children}</Button>
     )
 }

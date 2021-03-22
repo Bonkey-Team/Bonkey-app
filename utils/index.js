@@ -30,3 +30,27 @@ export function getSigner(library, account) {
   
     return new Contract(address, ABI, getProviderOrSigner(library, account))
   }
+
+export  const calculatePagenation = (totalCount, activeItem, pageSize) => {
+    if(totalCount < 1) {
+      return { startIndex:0, endIndex:0, pages:0 }
+    }
+    const pageCount = totalCount % pageSize === 0 ? totalCount / pageSize : totalCount / pageSize + 1
+    
+    if(activeItem < 1){
+      activeItem = 1        
+    }else if(activeItem > pageCount){
+      activeItem = pageCount
+    }else if(activeItem === undefined){
+      activeItem = 1
+    }
+    
+    const startIndex = (activeItem - 1) * pageSize
+    const endIndex = startIndex + pageSize > totalCount ? totalCount : startIndex + pageSize
+
+    let pages = []
+    for(var i = 1; i <= pageCount; i ++){
+      pages.push(i)
+    }
+    return { startIndex: startIndex, endIndex: endIndex, pages: pages, activeItem1: activeItem }
+}

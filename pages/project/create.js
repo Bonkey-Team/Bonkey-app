@@ -1,38 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { Segment, Grid, Card, Header, Image, Form, Message } from 'semantic-ui-react';
-import factory from '../ethereum/factory';
-import Layout from '../components/Layout';
-import { Link } from '../routes';
-import InputPanel  from '../components/InputPanel'
-import InputAreaPanel  from '../components/InputAreaPanel'
-import { createProject as  CreateProject1 } from '../utils/Project'
+import InputPanel  from '../../components/InputPanel'
+import InputAreaPanel  from '../../components/InputAreaPanel'
+import { createProject as  CreateProject1, getProjectContract } from '../../utils/Project'
 import { useWeb3React } from '@web3-react/core'
-import { AuthButon as Button } from '../components/AuthButton'
+import { AuthButon as Button } from '../../components/AuthButton'
 import Web3 from 'web3';
 
 const CreateProject = () => {
   const { library, account } = useWeb3React()
 
-  const [post, setPost] = useState({})
+  const [ post, setPost ] = useState({})
+  const [ loading, setLoading ] = useState(false)
 
-
-  const sourceToken = 0;
-  
-  useEffect(() => {
-    console.log("sourceToken changed. new value : ", post)
-  }, [post])
-
-
-  const sleep = (milliseconds) => {
-    return new Promise(resolve => setTimeout(resolve, milliseconds))
-  }
-
-  const submit = async () => {
+//   const sleep = (milliseconds) => {
+//     return new Promise(resolve => setTimeout(resolve, milliseconds))
+//   }
+  function submit(){
     // do submit
     web3 = new Web3(library)
-    setPost({...post, loading: true})
+    setLoading(true)
     try{
-      console.log("before submit : ", post)
       CreateProject1(post.stToken, 
                      post.tgToken, 
                      web3.utils.toWei(post.price.toString(), 'ether'), 
@@ -47,18 +35,16 @@ const CreateProject = () => {
                                console.log('create project error. ', err)
                                alert('create project error. ', err)
                               });
-
-      console.log("after submit : ", post)
     }catch(err){
       console.log('submit form error: ', err)
     }
-    setPost({...post, loading: false})
+    setLoading(false)
   }
 
   return (
         <Grid textAlign='center' style={{ height: '100' }}>
           <Grid.Column style={{ maxWidth: 450 }}>
-            <Form size='large' onSubmit={submit}>
+            <Form size='large' onSubmit={() => submit()}>
               <Segment stacked style={{width: '500px', align: 'center'}}>
                 <Header as='h2' color='orange' textAlign='left'>
                 Create Project 
@@ -81,11 +67,11 @@ const CreateProject = () => {
                 </Card>
                 <Card style={{width:'100%', display:'flex', flexFlow:'column'}}>
                   <InputPanel label='Project Title' placeholder='title'
-                              value={post.projectTitle} onChange={e => setPost({...post, rateprojectTitleCommission: e.target.value})}/>
+                              value={post.projectTitle} onChange={e => setPost({...post, projectTitle: e.target.value})}/>
                   <InputAreaPanel label='Project Content' placeholder='describe you project'
                               value={post.projectContent} onChange={e => setPost({...post, projectContent: e.target.value})}/>
                 </Card>               
-                <Button color='orange' fluid size='large' loading={post.loading} style={{width:'100%'}}>
+                <Button color='orange' fluid size='large' loading={loading} style={{width:'100%'}}>
                   Create 
                 </Button>
               </Segment>
