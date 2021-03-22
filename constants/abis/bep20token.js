@@ -1,0 +1,3 @@
+import BEP20TOKEN_DEFINETION from './BEP20Token.json'
+
+export { BEP20TOKEN_DEFINETION }

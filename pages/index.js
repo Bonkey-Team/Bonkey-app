@@ -1,99 +1,132 @@
-import React, { useEffect, useState } from 'react';
-import { Segment, Grid, Card, Header, Image, Form, Message } from 'semantic-ui-react';
-import factory from '../ethereum/factory';
-import Layout from '../components/Layout';
-import { Link } from '../routes';
-import InputPanel  from '../components/InputPanel'
-import InputAreaPanel  from '../components/InputAreaPanel'
-import { createProject as  CreateProject1 } from '../utils/Project'
+import { Tab } from 'semantic-ui-react'
+import CardPagination from '../components/CardPagination'
+import { fetchProjectCount, fetchProject, getProjectContract } from '../utils/Project'
 import { useWeb3React } from '@web3-react/core'
-import { AuthButon as Button } from '../components/AuthButton'
-import Web3 from 'web3';
-
-const CreateProject = () => {
-  const { library, account } = useWeb3React()
-
-  const [post, setPost] = useState({})
+import React, { useEffect, useState } from 'react'
+import { MAIN_PAGE_SIZE, TRUNCATE_PROJECT_MATE_LEN } from '../constants'
 
 
-  const sourceToken = 0;
-  
-  useEffect(() => {
-    console.log("sourceToken changed. new value : ", post)
-  }, [post])
+const PollView = () => (
+    <CardPagination></CardPagination>
+)
 
+// fetch project 
+export default function BonkeyFactory(){
 
-  const sleep = (milliseconds) => {
-    return new Promise(resolve => setTimeout(resolve, milliseconds))
-  }
-
-  const submit = async () => {
-    // do submit
-    web3 = new Web3(library)
-    setPost({...post, loading: true})
-    try{
-      console.log("before submit : ", post)
-      CreateProject1(post.stToken, 
-                     post.tgToken, 
-                     web3.utils.toWei(post.price.toString(), 'ether'), 
-                     post.rateProposal, 
-                     post.rateWithdraw, 
-                     post.rateCommission, 
-                     post.projectTitle,
-                     post.projectContent,
-                     library, 
-                     account).then(r => console.log('create project succeed!'))
-                             .catch(err => {
-                               console.log('create project error. ', err)
-                               alert('create project error. ', err)
-                              });
-
-      console.log("after submit : ", post)
-    }catch(err){
-      console.log('submit form error: ', err)
-    }
-    setPost({...post, loading: false})
-  }
-
-  return (
-        <Grid textAlign='center' style={{ height: '100' }}>
-          <Grid.Column style={{ maxWidth: 450 }}>
-            <Form size='large' onSubmit={submit}>
-              <Segment stacked style={{width: '500px', align: 'center'}}>
-                <Header as='h2' color='orange' textAlign='left'>
-                Create Project 
-                </Header>
-                <Card style={{width:'100%'}}>
-                  <InputPanel label='Source Token' placeholder='0x' name='stToken' 
-                              value={post.stToken} onChange={e => setPost({...post, stToken: e.target.value})}/>
-                  <InputPanel label='Target Token' placeholder='0x'
-                              value={post.tgToken} onChange={e => setPost({...post, tgToken: e.target.value})}/>
-                </Card>
-                <Card style={{width:'100%', display:'flex', flexFlow:'row wrap', justifyContent:'space-between'}}>
-                  <InputPanel label='Price' placeholder='0.0' style={{flex:'0 0 45%'}}
-                              value={post.price} onChange={e => setPost({...post, price: e.target.value})}/>
-                  <InputPanel label='Min Rate To Pass Proposal' placeholder='0.0' style={{flex:'0 0 45%'}}
-                              value={post.rateProposal} onChange={e => setPost({...post, rateProposal: e.target.value})}/>
-                  <InputPanel label='Min Rate To Withdraw' placeholder='0.0' style={{flex:'0 0 45%'}}
-                              value={post.rateWithdraw} onChange={e => setPost({...post, rateWithdraw: e.target.value})}/>
-                  <InputPanel label='Commission Rate' placeholder='0.0' style={{flex:'0 0 45%'}}
-                              value={post.rateCommission} onChange={e => setPost({...post, rateCommission: e.target.value})}/>
-                </Card>
-                <Card style={{width:'100%', display:'flex', flexFlow:'column'}}>
-                  <InputPanel label='Project Title' placeholder='title'
-                              value={post.projectTitle} onChange={e => setPost({...post, rateprojectTitleCommission: e.target.value})}/>
-                  <InputAreaPanel label='Project Content' placeholder='describe you project'
-                              value={post.projectContent} onChange={e => setPost({...post, projectContent: e.target.value})}/>
-                </Card>               
-                <Button color='orange' fluid size='large' loading={post.loading} style={{width:'100%'}}>
-                  Create 
-                </Button>
-              </Segment>
-            </Form>
-          </Grid.Column>
-        </Grid>
+    // data contains result list and totalCount
+    const [ data, setData ] = useState({currentIndex: 1})
     
-  )
-}
+    // let currentIndex = 1
+    
+    // get project info
+    const getProjectInfoByAddress = async ( address ) => {
+        return await getProjectContract(library, address)
+    }
 
-export default CreateProject;
+    // setData({...data, projects: projects})
+    // this method return fixed project one by one 
+    // reset would be set to state
+    const fetchFixedProject = async ( totalCount ) => {
+        // const fetchCount = totalCount > maxCount ? maxCount : totalCount
+        if(totalCount < 1){
+            return
+        }
+        // calculate start index and end index
+        const curIndex = data.currentIndex === undefined ? 1 : data.currentIndex
+
+        const totalPage = totalCount % MAIN_PAGE_SIZE === 0 ? totalCount / MAIN_PAGE_SIZE : totalCount / MAIN_PAGE_SIZE + 1
+
+        const startIndex = curIndex > totalPage ? ( totalPage - 1 ) * MAIN_PAGE_SIZE : ( curIndex - 1 ) * MAIN_PAGE_SIZE 
+        const endIndex = startIndex + MAIN_PAGE_SIZE > totalCount ?  totalCount : startIndex + MAIN_PAGE_SIZE
+        const projects = []
+        for( var i = startIndex; i < endIndex; i ++ ) {
+            //init project list and set to data
+            let pieceInfo = {}
+            try{
+                const projectAddress = await fetchProject(library, i)
+                pieceInfo = { ...pieceInfo, projectAddress: projectAddress }
+
+                const proj = await getProjectInfoByAddress(projectAddress)
+                
+                // const manager = await proj._manager()
+                // info = { ...info, manager: manager }
+
+                // const sourceToken = await proj._source_token()
+                // info = { ...info, sourceToken: sourceToken }
+
+                // const targetToken = await proj._target_token()
+                // info = { ...info, targetToken: targetToken }
+
+                // const price = await proj._price()
+                // info = { ...info, price: price }
+
+                // const rateProposal = await proj._min_rate_to_pass_proposal()
+                // info = { ...info, rateProposal: rateProposal }
+
+                // const rateCommission = await proj._commission_rate()
+                // info = { ...info, rateCommission: rateCommission }
+
+                const meta = await proj._project_meta()
+                // truncate first 5 word
+                if(meta.length>0){
+                    const truncateMeta = meta.length > TRUNCATE_PROJECT_MATE_LEN ? `${meta.substring(0, TRUNCATE_PROJECT_MATE_LEN)}...` : meta
+                    pieceInfo = { ...pieceInfo, meta: truncateMeta }
+                }
+
+                // TODO get info error, why ?
+                // const rateRequest = await proj._min_rate_to_pass_request()
+                // info = { ...info, rateRequest: rateRequest }
+
+            }catch(error){
+                console.log('err: ', error)
+            }
+            projects.push(pieceInfo)
+        }
+        setData({projects: projects})
+        return projects
+    }
+
+    const { library, active } = useWeb3React()
+
+    useEffect(() => {
+        if(!active){
+            return
+        }
+        // 获取总数
+        try{
+            fetchProjectCount(library)
+            .then(num => {
+                const intNum = parseInt(num)
+                fetchFixedProject(intNum)
+            })
+            .catch(err => {
+                console.log('fetch project error : ', err)
+            })
+        }catch(error){
+            console.log("total error: ", error)
+        }
+    }, [active])
+    
+
+    const nextPage = ( pageIndex ) => {
+        // currentIndex = pageIndex
+        console.log("pageIndex: ", pageIndex)
+        setData({...data, currentIndex: pageIndex})
+    }
+
+    const ProjectView = () => (
+        <CardPagination data={data.projects} totalSize={MAIN_PAGE_SIZE} nextPage={() => nextPage}></CardPagination>
+    )
+
+    const panes = [
+        { menuItem: 'Projects', render: () => <Tab.Pane><ProjectView></ProjectView></Tab.Pane> },
+      ]
+      
+    return (
+        <>
+            <div inverted='true' style={{width:'900px', color:'red', margin: '10px auto', background:'#aee2b1'}}>
+                <Tab panes={panes} />
+            </div>
+        </>
+    )
+}

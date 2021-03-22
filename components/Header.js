@@ -19,7 +19,7 @@ export default class Header extends React.Component{
                 <Image style={{marginTop:'0px', marginBottom:'0px'}} src='/images/bonkey_icon.jpg' width='30px' />
               </Menu.Item>
 
-              <Link route='/BonkeyFactory' >
+              <Link route='/' >
                 <Menu.Item
                   name='Home'
                   active={activeItem === 'BonkeyFactory'}
@@ -29,18 +29,6 @@ export default class Header extends React.Component{
                 <Menu.Item
                   name='Create Project'
                   active={activeItem === 'cProject'}
-                />
-              </Link>
-              <Link route='/project/index'>
-                <Menu.Item
-                  name='Project Detail'
-                  active={activeItem === 'projectIndex'}
-                />
-              </Link>
-              <Link route='/testPage' >
-                <Menu.Item
-                  name='Test Page'
-                  active={activeItem === 'BonkeyFactory'}
                 />
               </Link>
               <Link route='/doc' >

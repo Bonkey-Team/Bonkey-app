@@ -10,10 +10,6 @@ function CreateProposeModal(props) {
   const { active, library, account } = useWeb3React()
   const web3 = new Web3(library)
 
-  useEffect(() => {
-    console.log(props.projectAddress)
-  }, [props, data.loading])
-
   const submit = async () => {
     setData({ loading: true})
 
@@ -24,9 +20,9 @@ function CreateProposeModal(props) {
       const contract = await getProjectContract(library, props.projectAddress, account)
       console.log(contract)
       const overrides = {
-        gasLimit: 2000000
+        gasLimit: 6000000
       }
-      await contract.propose(content, web3.utils.toWei(amount, 'ether'), 100, overrides)
+      await contract.propose(content, web3.utils.toWei(amount, 'ether'), 8000000, overrides)
     }catch(err){
       console.log("submit error !", err)
     }
@@ -71,7 +67,7 @@ function CreateProposeModal(props) {
             content="Create!"
             labelPosition='right'
             icon='checkmark'
-            onClick={submit}
+            onClick={() => submit()}
             positive
             loading={data.loading}
           />
