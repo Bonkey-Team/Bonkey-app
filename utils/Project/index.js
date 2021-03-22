@@ -78,3 +78,10 @@ export async function getProjectInfo(provider, address1, account){
             rateRate: mrtpr, rateCommission: cr, title: title, content: content
     }
 }
+
+export async function deposit(provider, account, address, tokenAddress, amount) {
+    const projectContract = await getProjectContract(provider, address, account);
+    projectContract.deposit(tokenAddress, amount)
+        .then(r => console.log('deposit submit succeed.', r))
+        .catch(e => console.log('deposit submit error.', r))
+}
