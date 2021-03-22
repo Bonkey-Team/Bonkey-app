@@ -6,7 +6,7 @@ export async function createProject(stToken, tgToken, price, rateProposal, rateW
     // contractFactory.createProject('0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c','0xd08a0d5dbe7840d059fd50c953e3340e65606ea4',10,90,90,10,"hello", overrides).then(p => console.log('ddd',p)).catch((err)=>console.log(err))    
     const contractFactory = getContract(BONKEY_FACTORY_ADDRESS, BONKEY_FACTORY_DEFINETION['abi'], provider, account);
     const overrides = {
-        gasLimit: 30000000
+        gasLimit: 8000000
     }
  
     const projectMeta = {
@@ -14,7 +14,7 @@ export async function createProject(stToken, tgToken, price, rateProposal, rateW
         content: projectContent
     }
 
-    // return contractFactory.createProject(stToken,tgToken,price,parseInt(rateProposal),parseInt(rateWithdraw),parseInt(rateCommission), encodeURIComponent(JSON.stringify(projectMeta)), overrides);
+    const pmeta = encodeURIComponent(JSON.stringify(projectMeta))
     return contractFactory.createProject(
         stToken,
         tgToken,
@@ -22,19 +22,19 @@ export async function createProject(stToken, tgToken, price, rateProposal, rateW
         parseInt(rateProposal),
         parseInt(rateWithdraw),
         parseInt(rateCommission), 
-        encodeURIComponent(JSON.stringify(projectMeta)), 
+        pmeta,
         overrides
         );
 }
 
 // fetch total project count
 export async function fetchProjectCount(provider){
-    const contractFactory = getContract(BONKEY_FACTORY_ADDRESS, BONKEY_FACTORY_DEFINETION['abi'], provider);
-    const overrides = {
-        gasLimit: 2000000
-    }
-    
-    return contractFactory.allPairsLength(overrides)
+    const contractFactory = await getContract(BONKEY_FACTORY_ADDRESS, BONKEY_FACTORY_DEFINETION['abi'], provider);
+    // const overrides = {
+    //     gasLimit: 8000000
+    // }
+    const size = await contractFactory.allPairsLength()
+    return size
 }
 
 export async function fetchProject(provider, index){
@@ -83,5 +83,5 @@ export async function deposit(provider, account, address, tokenAddress, amount) 
     const projectContract = await getProjectContract(provider, address, account);
     projectContract.deposit(tokenAddress, amount)
         .then(r => console.log('deposit submit succeed.', r))
-        .catch(e => console.log('deposit submit error.', r))
+        .catch(err => console.log('deposit submit error.', err))
 }

@@ -1,24 +1,49 @@
+import { useWeb3React } from '@web3-react/core'
 import React, { useEffect, useState } from 'react'
 import { Icon, Card, Menu, Table } from 'semantic-ui-react'
 import { Link } from '../routes'
+import { calculatePagenation } from '../utils/index'
+import { REQUEST_PAGE_SIZE } from '../constants/index'
+import { fetchProjectCount, fetchProject, getProjectInfo } from '../utils/Project'
 
-const CardPagination = (props) => {
+const CardPagination = () => {
 
-  const [ activeItem, setActiveItem ] = useState(1)
-  const pageSize = 5
-  
-  let totalPage = props.totalSize % pageSize === 0 ? props.totalSize / pageSize : props.totalSize / pageSize + 1
-  var pages = []
-  for (var i = 1; i <= totalPage; i ++ ){
-    pages.push(i)
-  }
-
+  const [ activeItem, setActiveItem ] = useState(0)
+  const [ projs, setProjs ] = useState([])
+  const [ pages, setPages ] = useState([])
+  const { library, active } = useWeb3React()
 
   useEffect(() => {
-    props.nextPage(activeItem)
-  }, [activeItem])
+    const fetchData = async () => {
+      try{
+          // totalCount
+          const totalCount = await fetchProjectCount(library);
+          const { startIndex, endIndex, pages, activeItem1 } = calculatePagenation(totalCount.toString(10), activeItem, REQUEST_PAGE_SIZE)
+
+          // fetch 
+          let projList = []
+          for(var i = startIndex; i < endIndex; i  ++){
+            const address = await fetchProject(library, i)
+            const info = await getProjectInfo(library, address)
+            projList.push({projectAddress: info.address, title: info.title})
+          }
+          
+          setProjs(projList)
+          setPages(pages)
+          setActiveItem(activeItem1)
+      }catch (err ){
+        console.log('occured error : ', err)
+      }
+     
+    }
+    
+    if(active){
+      fetchData()
+    }
+    
+  }, [active, activeItem])
   
-  if(!!!props.data){
+  if(projs.length === 0){
     return (
       <Table>
       <Table.Body>
@@ -45,12 +70,12 @@ const CardPagination = (props) => {
   return (
   <Table>
     <Table.Body>
-        { props.data.map((item, key) => (
+        { projs.map((item, key) => (
           <Table.Row key={key}>
             <Link route={`/project/${item.projectAddress}`}>
               <Card style={{width:'860px', margin:'5px'}}>
                 <Card.Content>
-                  <Card.Header>{item.meta}</Card.Header>
+                  <Card.Header>{item.title}</Card.Header>
                   <Card.Description><a href="#">ViewProject</a></Card.Description>
                 </Card.Content>
               </Card>
@@ -63,15 +88,15 @@ const CardPagination = (props) => {
       <Table.Row>
         <Table.HeaderCell colSpan='1'>
           <Menu floated='right' pagination>
-            <Menu.Item as='a' icon >
-              <Icon name='chevron left' onClick={() => setActiveItem(activeItem - 1 < 1? 1 : activeItem - 1)}/>
+            <Menu.Item as='a' icon onClick={() => setActiveItem(activeItem - 1)}>
+              <Icon name='chevron left'/>
             </Menu.Item>
             {
               pages.map((item) => (
-                <Menu.Item key={item} as='a' active={item === activeItem} value='123' onClick={() => setActiveItem(item)}>{item}</Menu.Item>
+                <Menu.Item key={item} as='a' active={item === activeItem} value={item} onClick={() => setActiveItem(item)}>{item}</Menu.Item>
               ))
             }
-            <Menu.Item as='a' icon onClick={() => setActiveItem(activeItem + 1 > totalPage? totalPage : activeItem + 1)}>
+            <Menu.Item as='a' icon onClick={() => setActiveItem(activeItem + 1)}>
               <Icon name='chevron right' />
             </Menu.Item>
           </Menu>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Icon, Label, Menu, Table, Button } from 'semantic-ui-react'
 import { getProjectContract } from '../utils/Project'
 import { REQUEST_PAGE_SIZE } from '../constants'
+import { calculatePagenation } from '../utils/index'
 
 const TablePagination = (props) => {
   
@@ -13,30 +14,6 @@ const TablePagination = (props) => {
     activeItem:0
   })
 
-  const calculatePagenation = (totalCount, activeItem) => {
-    if(totalCount < 1) {
-      return { startIndex:0, endIndex:0, pages:0 }
-    }
-    const pageCount = totalCount % REQUEST_PAGE_SIZE === 0 ? totalCount / REQUEST_PAGE_SIZE : totalCount / REQUEST_PAGE_SIZE + 1
-    
-    if(activeItem < 1){
-      activeItem = 1        
-    }else if(activeItem > pageCount){
-      activeItem = pageCount
-    }else if(activeItem === undefined){
-      activeItem = 1
-    }
-
-    const startIndex = (activeItem - 1) * REQUEST_PAGE_SIZE
-    const endIndex = startIndex + REQUEST_PAGE_SIZE > totalCount ? totalCount : startIndex + REQUEST_PAGE_SIZE
-
-    let pages = []
-    for(var i = 1; i <= pageCount; i ++){
-      pages.push(i)
-    }
-    return { startIndex: startIndex, endIndex: endIndex, pages: pages, activeItem: activeItem }
-  }
-
   const { library, account } = useWeb3React()
 
   // only render once when parent rendering
@@ -44,7 +21,7 @@ const TablePagination = (props) => {
     const fetchData = async () => {
         const contract = await getProjectContract(library, props.projectAddress, account)
         const totalCount = (await contract._num_proposals()).toString(10)
-        const { startIndex, endIndex, pages, activeItem } = calculatePagenation(totalCount, data.activeItem)
+        const { startIndex, endIndex, pages, activeItem } = calculatePagenation(totalCount, data.activeItem, REQUEST_PAGE_SIZE)
 
         console.log('begin fetch data, start index : ', startIndex, ', endIndex: ', endIndex)
         let proList = []
