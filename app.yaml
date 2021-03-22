@@ -1,0 +1,25 @@
+runtime: nodejs12
+
+# This sample incurs costs to run on the App Engine flexible environment.
+# The settings below are to reduce costs during testing and are not appropriate
+# for production use. For more information, see:
+# https://cloud.google.com/appengine/docs/flexible/nodejs/configuring-your-app-with-app-yaml
+manual_scaling:
+  instances: 1
+resources:
+  cpu: 1
+  memory_gb: 0.5
+  disk_size_gb: 10
+liveness_check:
+  path: "/liveness_check"
+  check_interval_sec: 30
+  timeout_sec: 4
+  failure_threshold: 2
+  success_threshold: 2
+readiness_check:
+  path: "/readiness_check"
+  check_interval_sec: 500
+  timeout_sec: 400
+  failure_threshold: 2
+  success_threshold: 2
+  app_start_timeout_sec: 600
