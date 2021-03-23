@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useWeb3React } from '@web3-react/core'
-import { Input, Dropdown } from 'semantic-ui-react'
+import { Input } from 'semantic-ui-react'
 import TablePagination from "../../components/TablePagination";
 import CreateProposeModal from '../../components/CreateProposeModal'
 import { AuthButon as Button} from '../../components/AuthButton'
 import { FirstCard, SecondaryCard } from '../../components/CustomCard'
 import { getProjectContract, getProjectInfo, deposit } from '../../utils/Project'
 import { allowance, balanceOf, getToken } from '../../utils/Bep20'
-import { TRUNCATE_PROJECT_MATE_LEN } from '../../constants/index'
+import { injectedConnector } from '../../components/WalletButton'
 import Web3 from 'web3';
 
 const fillViewData = ( contract, provider ) => {
@@ -34,30 +34,20 @@ const fillViewData = ( contract, provider ) => {
     try{
         const web3 = new Web3(provider)
         const price = contract.price
-        projectInfo.price = web3.utils.fromWei(price.toString(), 'ether')
+        projectInfo.price = web3.utils.fromWei(price.toString(10), 'ether')
         const rateProposal = contract.rateProposal
-        projectInfo.rateProposal= rateProposal.toString()
-        // const rateRequest = await contract._min_rate_to_pass_request()
-        const rateRequest = 0
-        // console.log('rate proposal is : ', contract._min_rate_to_pass_request())
-        
-        projectInfo.rateRequest= rateRequest.toString()
+        projectInfo.rateProposal= rateProposal.toString(10)
+        projectInfo.rateRequest = contract.rateRequest
         const rateCommission = contract.rateCommission
-        projectInfo.rateCommission= rateCommission.toString()
+        projectInfo.rateCommission= rateCommission.toString(10)
     }catch(error){
-        console.log('fill view meta error: ', fileViewData)
+        console.log('fill view meta error: ', error)
     }
     return projectInfo    
 }
 
 const BodyWraper = ( props ) => {
-    const { library, account, active } = useWeb3React() 
-    // const router = useRouter()
-    // if(!active){
-    //     router.push('/BonkeyFactory')
-    //     return;
-    // }
-    // get request param
+    const { library, account, active, activate } = useWeb3React() 
     
     // set state
     const [ data, setData ] = useState({
@@ -79,14 +69,7 @@ const BodyWraper = ( props ) => {
         }
     })
     const [ symbol, setSymbol ] = useState({})
-    const [ refresh, setRefresh ] = useState(0)
-
-    if(!!library){
-        library.on('block', (e) => {
-            console.log("============== a event .", e)
-            setRefresh(refresh + 1)
-        })
-    }
+    const [ tokenBalance, setTokenBalance ] = useState({sourceToken:0, targetToken:0})
 
     // fetch project info, rendering when active change
     useEffect(() => {
@@ -103,22 +86,18 @@ const BodyWraper = ( props ) => {
         }catch(err){
             console.log('render project info error: ', err)
         }
-    }, [active, props.projectAddress, refresh])
+    }, [active])
 
     // fetch token0 balance
     useEffect(() => {
         const fetchData = async () => {
             const contract = await getProjectContract(library, props.projectAddress, account)
-            const token = await contract._target_token()
+            const token = await contract._source_token()
             const token0Balance = await balanceOf(library, account, token, contract.address)
-            // console.log("token0balance : ", token0Balance.toString(10))
-            setData({...data, token0: token0Balance.toString(10)})
-        }
-        if(props.projectAddress === undefined || props.projectAddress === '0x'){
-            return 
+            setTokenBalance({...tokenBalance, sourceToken: token0Balance.toString(10)})
         }
         fetchData()
-    }, [props.projectAddress, refresh])
+    }, [tokenBalance.sourceToken])
 
     // fetch token1 balance, rendering follows page rendering
     useEffect(() => {
@@ -126,14 +105,12 @@ const BodyWraper = ( props ) => {
             const contract = await getProjectContract(library, props.projectAddress, account)
             const token = await contract._target_token()
             const token1Balance = await balanceOf(library, account, token, contract.address)
-            console.log("token1balance : ", token1Balance.toString(10))
-            setData({...data, token1: token1Balance.toString(10)})
-        }
-        if(props.projectAddress === undefined || props.projectAddress === '0x'){
-            return 
+            setTokenBalance({...tokenBalance, targetToken: token1Balance.toString(10)})
         }
         fetchData()
-    }, [props.projectAddress, refresh])
+    }, [tokenBalance.targetToken])
+
+    
 
     // get token symbol
     useEffect(() => {
@@ -155,7 +132,7 @@ const BodyWraper = ( props ) => {
             return
         }
         fetchTokenSymbol()
-    }, [props.projectAddress, refresh])
+    }, [props.projectAddress])
 
     // this method
     // data.contributeToken0 , data.contributeToken0
@@ -208,10 +185,10 @@ const BodyWraper = ( props ) => {
                         <SecondaryCard value={data.project.rateRequest} meta='min rate to pass request' desc='min rate'></SecondaryCard>
                     </div>
                     <div style={{width:'230px', height:'100px', margin:'2px 5px'}}>
-                        <SecondaryCard value={data.token0} meta='source token balance' desc='source token balance'></SecondaryCard>
+                        <SecondaryCard value={tokenBalance.sourceToken} meta='source token balance' desc='source token balance'></SecondaryCard>
                     </div>
                     <div style={{width:'230px', height:'100px', margin:'2px 5px'}}>
-                        <SecondaryCard value={data.token1} meta='target token balance' desc='target token balance'></SecondaryCard>
+                        <SecondaryCard value={tokenBalance.targetToken} meta='target token balance' desc='target token balance'></SecondaryCard>
                     </div>
                 </div>
                 <div style={{width:'350px', height:'300px', margin:'44px 5px', display: 'flex', flexDirection:'column'}}>

@@ -1,27 +1,9 @@
-import Head from 'next/head'
 import React, { useEffect } from 'react'
-import { Web3ReactProvider } from '@web3-react/core'
-import { Web3Provider } from '@ethersproject/providers'
 import { useWeb3React } from '@web3-react/core'
-import { InjectedConnector } from '@web3-react/injected-connector'
-import Link from 'next/link'
 import useSWR from 'swr'
 import { formatEther }from '@ethersproject/units'
 import { Button, Label } from 'semantic-ui-react'
-
-
-export const injectedConnector = new InjectedConnector({
-  supportedChainIds: [
-    1, // Mainet
-    3, // Ropsten
-    4, // Rinkeby
-    5, // Goerli
-    42, // Kovan
-    56, // bsc mainnet
-    97  // bsc testnet
-  ],
-})
-
+import { injectedConnector } from '../constants/injector'
 export const ConnectButton = () => {
   const { chainId, account, activate, active } = useWeb3React();
 
@@ -65,10 +47,8 @@ const Balance = () => {
   })
 
   useEffect(() => {
-    // listen for changes on an Ethereum address
-    console.log(`listening for blocks...`)
+    // listen for changes on an Ethereum address    
     library.on('block', () => {
-      console.log('update balance...')
       mutate(undefined, true)
     })
     // remove listener when the component is unmounted

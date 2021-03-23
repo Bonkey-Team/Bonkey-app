@@ -2,8 +2,15 @@ import React from 'react';
 import { Grid, Container } from 'semantic-ui-react';
 import Head from 'next/head';
 import Header from './Header';
+import { injectedConnector } from '../constants/injector'
+import { useWeb3React } from '@web3-react/core'
 
 export default (props) => {
+  const {activate, active} = useWeb3React()
+  if(!active){
+    console.log("try to connect.")
+    activate(injectedConnector)
+  }
   return (
     <div className='layout'>
         <style>

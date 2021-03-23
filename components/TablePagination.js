@@ -1,11 +1,18 @@
 import { useWeb3React } from '@web3-react/core'
 import React, { useEffect, useState } from 'react'
-import { Icon, Label, Menu, Table, Button } from 'semantic-ui-react'
+import { Icon, Menu, Table, Button } from 'semantic-ui-react'
 import { getProjectContract } from '../utils/Project'
 import { REQUEST_PAGE_SIZE } from '../constants'
 import { calculatePagenation } from '../utils/index'
+import { DescModal } from './DescModal'
+import { BigNumber } from '@ethersproject/bignumber'
+import { injectedConnector } from '../constants/injector'
 
 const TablePagination = (props) => {
+  const { library, account,active, activate } = useWeb3React()
+  if(!active){
+    activate(injectedConnector)
+  }
   
   const [ data, setData ] = useState({
     proposalList:[],
@@ -14,35 +21,41 @@ const TablePagination = (props) => {
     activeItem:0
   })
 
-  const { library, account } = useWeb3React()
+  const convertBigNumber = (number) => {
+    if(number === undefined){
+      return 0
+    }
+    if(typeof(number) === BigNumber){
+      return number.toString(10)
+    }
+    return number
+  }
 
   // only render once when parent rendering
   useEffect(() => {
     const fetchData = async () => {
         const contract = await getProjectContract(library, props.projectAddress, account)
         const totalCount = (await contract._num_proposals()).toString(10)
-        const { startIndex, endIndex, pages, activeItem } = calculatePagenation(totalCount, data.activeItem, REQUEST_PAGE_SIZE)
+        const { startIndex, endIndex, pages, activeItem1 } = calculatePagenation(totalCount, Math.floor(data.activeItem), REQUEST_PAGE_SIZE)
 
-        console.log('begin fetch data, start index : ', startIndex, ', endIndex: ', endIndex)
         let proList = []
         for(var i=startIndex; i<endIndex; i++){
-          const proposal = contract._proposals(0)
-          proList.push({amount: proposal._proposed_amount, 
+          const proposal = await contract._proposals(0)
+          proList.push({amount: convertBigNumber(proposal._proposed_amount), 
                         meta: proposal._proposal_meta,
-                        recipient: '0x',
+                        recipient: '',
                         nw: 0,
                         status: 0})
         }
-        console.log('get result : ', totalCount, ', list: ', proList, ', pages: ', pages)
-        setData({totalCount: totalCount, proposalList: proList, pageIndexList: pages, activeItem: activeItem})
+        setData({totalCount: totalCount, proposalList: proList, pageIndexList: pages, activeItem: activeItem1})
     }
-    if(props.projectAddress === undefined || props.projectAddress === '0x'){
-      console.log('cant get address, exit ', props.projectAddress)
-      return
-    }
-    console.log('get address, continue ', props.projectAddress)
+    
     fetchData()
-  }, [props.projectAddress])
+  }, [data.activeItem])
+
+  const showDesc = () => {
+    return <Desc open={true} content='this is a test'></Desc>
+  }
 
   return (
   <Table celled>
@@ -68,7 +81,7 @@ const TablePagination = (props) => {
         return (
         <Table.Row key={index}>
           <Table.Cell>{index}</Table.Cell>
-          <Table.Cell><a>view</a></Table.Cell>
+          <Table.Cell><DescModal content={item.meta}/></Table.Cell>
           <Table.Cell>{item.amount}</Table.Cell>
           <Table.Cell>{item.recipient}</Table.Cell>
           <Table.Cell><a>{item.nw}</a></Table.Cell>

@@ -11,17 +11,18 @@ function CreateProposeModal(props) {
   const web3 = new Web3(library)
 
   const submit = async () => {
-    setData({ loading: true})
+    setData({...data, loading: true})
 
     try{
       const { content, amount } = data;
-      console.log(props.projectAddress)
+      
       // create a proposal
       const contract = await getProjectContract(library, props.projectAddress, account)
-      console.log(contract)
+      console.log(contract, ' request data is ', data)
       const overrides = {
         gasLimit: 6000000
       }
+
       await contract.propose(content, web3.utils.toWei(amount, 'ether'), 8000000, overrides)
     }catch(err){
       console.log("submit error !", err)
@@ -31,8 +32,8 @@ function CreateProposeModal(props) {
 
   return (
     <Modal
-      onClose={() => setData({open:false})}
-      onOpen={() => setData({open:true})}
+      onClose={() => setData({...data, open:false})}
+      onOpen={() => setData({...data, open:true})}
       open={data.open}
       trigger={<Button disabled={!active} color='orange'>Create Proposal</Button>}
       style={{marginBottom:'100px'}}
@@ -60,7 +61,7 @@ function CreateProposeModal(props) {
           </div>
         </Modal.Content>
         <Modal.Actions style={{marginTop:'100px'}}>
-          <Button color='black' onClick={() => setData({open: false})}>
+          <Button color='black' onClick={() => setData({...data, open: false})}>
             Cancel!
           </Button>
           <Button

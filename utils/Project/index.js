@@ -75,7 +75,7 @@ export async function getProjectInfo(provider, address1, account){
     }
     
     return {address: address, sourceToken: st, targetToken: tt, price: p, rateProposal: mrtpp, 
-            rateRate: mrtpr, rateCommission: cr, title: title, content: content
+            rateRequest: mrtpr.toString(10), rateCommission: cr, title: title, content: content
     }
 }
 
